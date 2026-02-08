@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Per mia moglie ❤️</title>
+    <title>Per Giorgia ❤️</title>
     <style>
         body {
             margin: 0;
@@ -19,7 +19,7 @@
             transition: background 1s ease;
         }
 
-        h1 { font-size: 2.5em; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5em; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); padding: 0 20px; }
 
         button {
             font-size: 22px;
@@ -28,11 +28,11 @@
             border: none;
             border-radius: 40px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        #yes { background-color: #ff1744; color: white; position: relative; z-index: 10; }
+        #yes { background-color: #ff1744; color: white; position: relative; z-index: 999; }
         #no { background-color: white; color: #ff1744; position: absolute; z-index: 5; }
 
         .heart {
@@ -40,6 +40,7 @@
             top: -10px;
             font-size: 24px;
             animation: fall linear forwards;
+            pointer-events: none;
         }
 
         @keyframes fall {
@@ -50,12 +51,14 @@
 <body>
 
     <div id="quiz">
-        <h1>Giorgia, vuoi essere la mia Valentina ? 💘</h1>
+        <h1>Giorgia, vuoi essere la mia Valentina? 💘</h1>
         <button id="yes">Sì ❤️</button>
         <button id="no">No</button>
     </div>
 
-    <audio id="music" src="mora.mp3" preload="auto" loop></audio>
+    <audio id="music" loop preload="auto">
+        <source src="mora.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         const yesButton = document.getElementById("yes");
@@ -66,18 +69,7 @@
         let noClicks = 0;
         let yesSize = 1;
 
-        // "Sblocca" l'audio appena lei tocca lo schermo
-        const unlock = () => {
-            music.play().then(() => {
-                music.pause();
-                music.currentTime = 0;
-            });
-            document.removeEventListener('click', unlock);
-            document.removeEventListener('touchstart', unlock);
-        };
-        document.addEventListener('click', unlock);
-        document.addEventListener('touchstart', unlock);
-
+        // Funzione per muovere il tasto NO
         function moveNo() {
             const x = Math.random() * (window.innerWidth - 150);
             const y = Math.random() * (window.innerHeight - 150);
@@ -89,9 +81,10 @@
 
         noButton.addEventListener("click", () => {
             noClicks++;
-            yesSize += 0.5;
+            yesSize += 0.4; // Aumenta gradualmente
             yesButton.style.transform = `scale(${yesSize})`;
-            if (noClicks >= 3) noButton.style.display = "none";
+            moveNo();
+            if (noClicks >= 5) noButton.style.display = "none";
         });
 
         function createHeart() {
@@ -105,12 +98,19 @@
         }
 
         yesButton.addEventListener("click", () => {
-            music.play();
+            // Prova a riprodurre l'audio
+            music.play().catch(error => {
+                console.log("Browser block bypass");
+                // Fallback per alcuni browser mobili
+                music.muted = false;
+                music.play();
+            });
+
             document.body.style.background = "linear-gradient(135deg, #ff416c, #ff4b2b)";
             document.body.innerHTML = `
-                <div style="color:white;">
+                <div style="color:white; padding: 20px;">
                     <h1 style="font-size:3.5em;">SCELTA GIUSTA 😈❤️</h1>
-                    <p style="font-size:1.8em;">Sapevo che avresti detto di si! Quindi il 14 ci vediamo? ahahah 💘</p>
+                    <p style="font-size:1.8em;">Sapevo che avresti detto di sì! Quindi il 14 ci vediamo? ahahah 💘</p>
                 </div>
             `;
             setInterval(createHeart, 150);
