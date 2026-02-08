@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Per mia moglie ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff4e88, #ff8fb1);
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
+
+        h1 { font-size: 2.5em; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+
+        button {
+            font-size: 22px;
+            padding: 15px 35px;
+            margin: 10px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #yes { background-color: #ff1744; color: white; position: relative; z-index: 10; }
+        #no { background-color: white; color: #ff1744; position: absolute; z-index: 5; }
+
+        .heart {
+            position: fixed;
+            top: -10px;
+            font-size: 24px;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz">
+        <h1>Giorgia, vuoi essere la mia Valentina ? 💘</h1>
+        <button id="yes">Sì ❤️</button>
+        <button id="no">No</button>
+    </div>
+
+    <audio id="music" src="mora.mp3" preload="auto" loop></audio>
+
+    <script>
+        const yesButton = document.getElementById("yes");
+        const noButton = document.getElementById("no");
+        const music = document.getElementById("music");
+        const quiz = document.getElementById("quiz");
+
+        let noClicks = 0;
+        let yesSize = 1;
+
+        // "Sblocca" l'audio appena lei tocca lo schermo
+        const unlock = () => {
+            music.play().then(() => {
+                music.pause();
+                music.currentTime = 0;
+            });
+            document.removeEventListener('click', unlock);
+            document.removeEventListener('touchstart', unlock);
+        };
+        document.addEventListener('click', unlock);
+        document.addEventListener('touchstart', unlock);
+
+        function moveNo() {
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 150);
+            noButton.style.left = x + "px";
+            noButton.style.top = y + "px";
+        }
+
+        noButton.addEventListener("mouseover", moveNo);
+
+        noButton.addEventListener("click", () => {
+            noClicks++;
+            yesSize += 0.5;
+            yesButton.style.transform = `scale(${yesSize})`;
+            if (noClicks >= 3) noButton.style.display = "none";
+        });
+
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (2 + Math.random() * 3) + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        yesButton.addEventListener("click", () => {
+            music.play();
+            document.body.style.background = "linear-gradient(135deg, #ff416c, #ff4b2b)";
+            document.body.innerHTML = `
+                <div style="color:white;">
+                    <h1 style="font-size:3.5em;">SCELTA GIUSTA 😈❤️</h1>
+                    <p style="font-size:1.8em;">Sapevo che avresti detto di si! Quindi il 14 ci vediamo? ahahah 💘</p>
+                </div>
+            `;
+            setInterval(createHeart, 150);
+        });
+    </script>
+</body>
+</html>
